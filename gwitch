@@ -1,0 +1,29 @@
+#!/bin/bash
+
+ssh_config_path="$HOME/.ssh/config"
+temp_ssh_config_path="$HOME/.ssh/config_temporary"
+
+new_primary_username=`echo "$1" | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//'`
+curr_primary_username=`awk '/^Host github\.com$/,/#Username/{print $2}' $ssh_config_path | tail -1`
+
+if [ "$new_primary_username" == "$curr_primary_username" ];
+then 
+	echo "This is already the current username";
+	exit 1;
+fi
+
+new_user_name=`awk "/^Host github-$new_primary_username$/,/#Name/{print $2}" $ssh_config_path | tail -1 | sed 's/#Name //' | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//'`
+new_user_email=`awk "/^Host github-$new_primary_username$/,/#Email/{print $2}" $ssh_config_path | tail -1 | sed 's/#Email //' | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//'`
+
+echo "Switching from $curr_primary_username to $new_primary_username"
+echo "Setting name to $new_user_name"
+echo "Setting email to $new_user_email"
+
+awk -v new_primary_username_regex="Host github-$new_primary_username" -v curr_primary_username="$curr_primary_username" '
+ !y{y=sub(/Host github\.com/,"Host github-"curr_primary_username)}
+ !x{x=sub(new_primary_username_regex,"Host github.com")}
+ 1' $ssh_config_path > $temp_ssh_config_path && mv $temp_ssh_config_path $ssh_config_path
+
+
+git config --global user.email "$new_user_email"
+git config --global user.name "$new_user_name"
