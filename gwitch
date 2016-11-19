@@ -6,8 +6,19 @@ temp_ssh_config_path="$HOME/.ssh/config_temporary"
 new_primary_username=`echo "$1" | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//'`
 curr_primary_username=`awk '/^Host github\.com$/,/#Username/{print $2}' $ssh_config_path | tail -1`
 
-if [ "$new_primary_username" == "$curr_primary_username" ];
-then 
+if ! [[ $new_primary_username = *[!\ ]* ]]; then
+  echo "You did not enter a username"
+  exit 1;
+fi
+
+host_new_username_count=`grep -o "#Username $new_primary_username" $ssh_config_path | wc -l`
+githubdotcom_username_count=`grep -o "Host github.com" $ssh_config_path | wc -l`
+if ! [ $host_new_username_count = "1" -a $githubdotcom_username_count = "1" ]; then
+	echo "Couldn't find a suitable entry for $new_primary_username in ssh config file"
+	exit 1;
+fi
+
+if [ "$new_primary_username" == "$curr_primary_username" ]; then 
 	echo "This is already the current username";
 	exit 1;
 fi
