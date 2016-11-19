@@ -1,7 +1,13 @@
 #!/bin/bash
 
 ssh_config_path="$HOME/.ssh/config_gwitch"
-temp_ssh_config_path="$HOME/.ssh/config_temporary"
+master_ssh_config_path="$HOME/.ssh/config"
+temp_ssh_config_path="$HOME/.ssh/config_temp"
+
+#Check if master config file has the include line for gwitch, add it if not
+if ! grep "Include config_gwitch" "$master_ssh_config_path" > /dev/null; then
+	printf "\n#This line is used for gwitcher\nInclude config_gwitch\n" >> "$master_ssh_config_path"
+fi
 
 new_primary_username=`echo "$1" | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//'`
 curr_primary_username=`awk '/^Host github\.com$/,/#Username/{print $2}' $ssh_config_path | tail -1`
