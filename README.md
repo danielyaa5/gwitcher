@@ -34,4 +34,4 @@ Host github.com
   IdentityFile ~/.ssh/id_rsa_current_username
 ```
 ###Step 3
-Run the gwitch command like so `gwitch username-to-switch-to` and then restart your terminal.
+Run the gwitch command like so `gwitch username-to-switch-to` and then restart your terminal. For now, any time you run the gwitch command you have to restart the terminal.
