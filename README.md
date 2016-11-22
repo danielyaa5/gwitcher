@@ -11,3 +11,27 @@ OpenSSH 7.3 or greater (check version with `ssh -v`, see [here](https://mochtu.d
 ###Step 1
 Download the script and add to path, *i.e.* in Mac OS X
 `mv /directory/to/downloaded/script /usr/local/bin`
+###Step 2
+Create the gwitcher_config file in `~/.ssh/config`
+
+The formatting of the file should look like this. Note that the comments are required for the command to work correctly. This new file will be included into your main `~/.ssh/config` file. The `Host github.com` settings are used for the current github user. See this [tutorial](https://code.tutsplus.com/tutorials/quick-tip-how-to-work-with-github-and-multiple-accounts--net-22574) on how to set up a git config file for multiple accounts.
+
+```bash
+Host github-other_username
+  #Username other_username
+  #Name Billy Bob
+  #Email billbob@gmail.com
+  HostName github.com
+  User git
+  IdentityFile ~/.ssh/id_rsa_other_username
+
+Host github.com
+  #Username current_username
+  #Name Billy Bob
+  #Email current_username@gmail.com
+  HostName github.com
+  User git
+  IdentityFile ~/.ssh/id_rsa_current_username
+```
+###Step 3
+Run the gwitch command like so `gwitch username-to-switch-to` and then restart your terminal.
